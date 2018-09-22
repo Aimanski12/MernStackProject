@@ -37,6 +37,8 @@ router.get('/', (req, res, next) => {
 // @desc    Register user
 // @access  Public
 router.post('/register', (req, res, next) => {
+
+  // load the validation
   const { errors, isValid } = validateRegisterInput(req.body)
   
   console.log('isvalid: ', isValid)
