@@ -16,6 +16,16 @@ const jwt = require('jsonwebtoken')
 // load the secretkey
 const secret = require('../../config/keys')
 
+// load passport module
+const passport = require('passport')
+
+// load input form validation for the registration
+const validateRegisterInput = require('../../validation/register')
+
+// load input form validation for the login
+const validateLoginInput = require('../../validation/login')
+
+
 // @route   GET api/users/test
 // @desc    Tests users route
 // @access  Public
@@ -27,12 +37,21 @@ router.get('/', (req, res, next) => {
 // @desc    Register user
 // @access  Public
 router.post('/register', (req, res, next) => {
-  User.findOne({ email: req.body.email })
-    .then(user => {
-      if(user){
-        return res.status(400).json({ email: 'Email alredy exists' });
-      } else {
+  const { errors, isValid } = validateRegisterInput(req.body)
+  
+  console.log('isvalid: ', isValid)
+  if(!isValid) {
+    return res.status(400).json(errors)
+  }
 
+
+  User.findOne({ email: req.body.email })
+  .then(user => {
+    if(user){
+       errors.email = 'Email already exists';
+      return res.status(400).json({errors});
+    } else {
+      
       // use gravatar to grab the image
       const avatar = gravatar.url(req.body.email, {
         s: '200',  // size of the email
@@ -49,15 +68,17 @@ router.post('/register', (req, res, next) => {
       
       bcrypt.genSalt(10, (err, salt) => {
         // salt is the returned value
-          console.log(`this is the salt: ${salt}`)
+          // console.log(`this is the salt: ${salt}`)
         bcrypt.hash(newUser.password, salt, (err, hash) => {
           // hash is the new hashedPassword
-            console.log(`this is the hashed password: ${hash}`)
+            // console.log(`this is the hashed password: ${hash}`)
           if(err) throw err;
           newUser.password = hash;
           newUser
             .save()
-              .then(user => res.json(user))
+              .then(user => { 
+                res.json(user)
+              })
                 .catch(err => console.log(err))
         })
       })
@@ -74,12 +95,21 @@ router.post('/login', (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
 
+
+   const {errors, isValid} = validateLoginInput(req.body)
+   console.log('isvalid: ', isValid)
+   
+   if (!isValid) {  return res.status(400).json(errors)  }
+
+
+
   // Find user by email
   User.findOne({email})
     .then(user => {
       // Check for user
       if(!user) {
-        return res.status(404).json({email: 'User email is not found'})
+        errors.email = 'User not found'
+        return res.status(404).json({errors})
       } 
 
       // Check the password
@@ -104,7 +134,8 @@ router.post('/login', (req, res, next) => {
                   })
             });
           } else {
-            return res.status(400).json({err: 'Invalid username or password.'})
+            errors.password = 'Passowrd is invalid'
+            return res.status(400).json(errors)
           }
         })
 
@@ -113,6 +144,49 @@ router.post('/login', (req, res, next) => {
 
 
 
-
+// @route   GET api/users/current
+// @desc    Return current user
+// @access  Private
+router.get('/current', passport.authenticate('jwt', { session: false }), 
+  (req, res, next) => {
+    res.json({sucess: 'we are in the current route', user: req.user})
+})
 
 module.exports = router;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

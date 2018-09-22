@@ -29,6 +29,15 @@ mongoose
       .catch(err => console.log(err))
 
 
+// passport middleware
+// here we will initialize the passport to
+app.use(passport.initialize())
+// Passport Configuration (from a local folder)
+// we can require it explicitly
+require('./config/passport')(passport);
+
+
+
 
 app.use('/api/users', users);
 app.use('/api/profile', profile);
