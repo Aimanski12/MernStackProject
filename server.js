@@ -36,6 +36,11 @@ app.use(passport.initialize())
 // we can require it explicitly
 require('./config/passport')(passport);
 
+app.get('/', (req, res) => {
+  res.send('Hello World')
+})
+
+
 
 
 
