@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const passport = require('passport')
-
+const path = require('path');
 
 // require the routes folder
 const users = require('./routes/api/users')
@@ -47,6 +47,19 @@ app.get('/', (req, res) => {
 app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/posts', posts)
+
+
+// server static assets if in prduction
+if(process.env.NODE_ENV === 'production'){
+  // set static folder
+  app.use(express.static('client/build'))
+
+  // create route
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
+  })
+}
+
 
 
 
