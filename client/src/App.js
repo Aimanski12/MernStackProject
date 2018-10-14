@@ -27,7 +27,7 @@ import Post from './components/post/Post';
 import NotFound from './components/not-found/NotFound';
 
 import './App.css';
-
+/////sample
 // Check for token
 if (localStorage.jwtToken) {
   // Set auth token header auth
