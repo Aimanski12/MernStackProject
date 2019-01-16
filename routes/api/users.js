@@ -33,9 +33,7 @@ router.get('/', (req, res, next) => {
   res.json({'msg': 'Users was working'})
 })
 
-// @route   GET api/users/register
-// @desc    Register user
-// @access  Public
+  
 router.post('/register', (req, res, next) => {
 
   // load the validation
@@ -51,7 +49,7 @@ router.post('/register', (req, res, next) => {
   .then(user => {
     if(user){
        errors.email = 'Email already exists';
-      return res.status(400).json({errors});
+      return res.status(400).json({errors}); 
     } else {
       
       // use gravatar to grab the image
@@ -79,6 +77,7 @@ router.post('/register', (req, res, next) => {
           newUser
             .save()
               .then(user => { 
+                console.log('there was a new user', user)
                 res.json(user)
               })
                 .catch(err => console.log(err))

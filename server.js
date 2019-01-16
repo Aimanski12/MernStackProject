@@ -40,14 +40,9 @@ require('./config/passport')(passport);
 //   res.send('Hello World')
 // })
 
-
-
-
-
 app.use('/api/users', users);
 app.use('/api/profile', profile);
 app.use('/api/posts', posts)
-
 
 // server static assets if in prduction
 if(process.env.NODE_ENV === 'production'){
@@ -59,8 +54,6 @@ if(process.env.NODE_ENV === 'production'){
     res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'))
   })
 }
-
-
 
 
 const port = process.env.PORT || 5000;
