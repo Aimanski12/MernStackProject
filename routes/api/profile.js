@@ -32,7 +32,7 @@ router.get('/test', (req, res, next) => {
 
 
 // @route   GET api/profile/profile
-// @desc    Tests profile route
+// @desc    Get current profile route 
 // @access  Public
 router.get('/', passport.authenticate('jwt', {session: false}), (req, res, next) => {
   const errors = {};
